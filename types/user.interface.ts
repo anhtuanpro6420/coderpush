@@ -1,7 +1,8 @@
 export interface IUser {
-    id: string;
-    title: string;
-    firstName: string;
-    lastName: string;
-    picture: string;
+  id: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  picture: string;
+  isFavorited?: boolean;
 }

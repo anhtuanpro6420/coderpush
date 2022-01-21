@@ -2,3 +2,14 @@
   max-height: 100vh;
   height: 100vh;
 }
+
+.actionContainer {
+  height: 10vh;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.btnAction {
+  margin: 10px;
+}
