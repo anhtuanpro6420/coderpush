@@ -1,6 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-}
+const withAntdLess = require('next-plugin-antd-less');
 
-module.exports = nextConfig
+module.exports = withAntdLess({
+  modifyVars: {},
+  lessVarsFilePathAppendToEndOfContent: false,
+  cssLoaderOptions: {},
+  webpack(config) {
+    return config;
+  },
+});
