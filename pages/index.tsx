@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import axios from '../axios-instance';
+import UserCarousel from '../components/UserCarousel';
 import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
 
@@ -12,10 +13,9 @@ interface Props {
 
 const Home: NextPage<Props> = ({ users, total, page, limit }) => {
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>Home</main>
-      <footer className={styles.footer}>Footer</footer>
-    </div>
+    <main className={styles.main}>
+      <UserCarousel users={users} />
+    </main>
   );
 };
 
