@@ -1,6 +1,6 @@
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import axios from '../axios-instance';
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
 
 interface Props {
@@ -10,18 +10,14 @@ interface Props {
   limit: number;
 }
 
-const Home: NextPage<Props> = ({ users, total ,page, limit }) => {
+const Home: NextPage<Props> = ({ users, total, page, limit }) => {
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        Home
-      </main>
-      <footer className={styles.footer}>
-        Footer
-      </footer>
+      <main className={styles.main}>Home</main>
+      <footer className={styles.footer}>Footer</footer>
     </div>
-  )
-}
+  );
+};
 
 export async function getStaticProps() {
   try {
@@ -32,15 +28,13 @@ export async function getStaticProps() {
         users,
         total,
         page,
-        limit
+        limit,
       },
-      revalidate: 1
-    }
+      revalidate: 1,
+    };
   } catch (err) {
     console.log(err);
   }
 }
 
-export default Home
-
-
+export default Home;
