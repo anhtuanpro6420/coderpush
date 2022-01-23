@@ -12,8 +12,8 @@ interface Props {
 const UserCard: FC<Props> = ({ user }) => {
   const renderUserInformation = (userDetail: IUser) => {
     const { firstName, lastName, dateOfBirth } = userDetail || {};
-    return `${firstName || lastName}, ${
-      dateOfBirth && calculateAge(dateOfBirth)
+    return `${firstName || lastName}${
+      (dateOfBirth && ', ' + calculateAge(dateOfBirth)) || ''
     }`;
   };
 

@@ -13,3 +13,16 @@
 .btnAction {
   margin: 10px;
 }
+
+.btnAction:active,
+.btnAction:focus {
+  color: inherit;
+  border-color: #d9d9d9;
+}
+
+.spinner {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+}
