@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Spin } from 'antd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
@@ -11,6 +11,7 @@ import {
   DEFAULT_USERS_PAGE,
   DEFAULT_USERS_LIMIT,
 } from '../constants/user.constant';
+import Overlay from '../components/Overlay';
 
 interface Props {
   usersProp: Array<IUser>;
@@ -30,13 +31,16 @@ const Home: NextPage<Props> = ({
   const [page, setPage] = useState<number>(pageProp || DEFAULT_USERS_PAGE);
   const [limit, setLimit] = useState<number>(limitProp || DEFAULT_USERS_LIMIT);
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     getUserById(currentUser.id);
-  }, [currentUser.id]);
+  }, []);
 
   const getUserById = async (userId: string) => {
+    setIsFetching(true);
     const userDetail: IUser = await fetchUserById(userId);
+    setIsFetching(false);
     setCurrentUser(userDetail);
   };
 
@@ -49,8 +53,7 @@ const Home: NextPage<Props> = ({
     if (!nextUser && shouldLoadMore()) {
       await loadMore();
     } else {
-      const userDetail: IUser = await fetchUserById(nextUser.id);
-      setCurrentUser(userDetail);
+      await getUserById(nextUser.id);
     }
   };
 
@@ -72,7 +75,8 @@ const Home: NextPage<Props> = ({
       page: fetchPage,
     } = (await fetchUser({ page: nextPage })) || {};
     setUsers(fetchUsers);
-    setCurrentUser(fetchUsers[0]);
+    const firstUser: IUser = fetchUsers[0];
+    await getUserById(firstUser.id);
     setTotal(fetchTotal);
     setPage(fetchPage);
   };
@@ -95,6 +99,11 @@ const Home: NextPage<Props> = ({
           icon={<HeartOutlined />}
           onClick={() => handleFavorite(currentUser)}
         />
+        {isFetching && (
+          <Overlay>
+            <Spin className={styles.spinner} />
+          </Overlay>
+        )}
       </div>
     </main>
   );
