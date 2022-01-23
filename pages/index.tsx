@@ -2,6 +2,7 @@ import { Button, Card, Col, Radio, Row, Spin } from 'antd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
+import Meta from 'antd/lib/card/Meta';
 import UserCard from '../components/UserCard';
 import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
@@ -12,7 +13,7 @@ import {
   DEFAULT_USERS_LIMIT,
 } from '../constants/user.constant';
 import Overlay from '../components/Overlay';
-import Meta from 'antd/lib/card/Meta';
+import { renderUserInformation } from '../utils/user.util';
 
 interface Props {
   usersProp: Array<IUser>;
@@ -87,7 +88,7 @@ const Home: NextPage<Props> = ({
 
   const renderFavoritedTab = () => {
     return (
-      <Row gutter={8}>
+      <Row gutter={8} className={styles.favoritedContainer}>
         {favoritedUsers.map((user: IUser) => {
           return (
             <Col key={user.id} span={12}>
@@ -95,9 +96,8 @@ const Home: NextPage<Props> = ({
                 hoverable
                 cover={<img alt="User picture" src={user.picture} />}
               >
-                <Meta title={user.firstName} />
+                <Meta title={renderUserInformation(user)} />
               </Card>
-              ,
             </Col>
           );
         })}

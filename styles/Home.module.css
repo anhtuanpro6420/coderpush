@@ -5,6 +5,10 @@
   flex-direction: column;
 }
 
+.favoritedContainer {
+  margin: 10px;
+}
+
 .actionContainer {
   height: 10vh;
   justify-content: center;
