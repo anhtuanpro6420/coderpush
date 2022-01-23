@@ -16,6 +16,7 @@
   display: flex;
   margin-top: auto;
   height: 50px;
+  min-height: 50px;
 }
 
 .btnTab {

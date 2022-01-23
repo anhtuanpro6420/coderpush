@@ -1,4 +1,4 @@
-import { Button, Radio, Spin } from 'antd';
+import { Button, Card, Col, Radio, Row, Spin } from 'antd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import {
   DEFAULT_USERS_LIMIT,
 } from '../constants/user.constant';
 import Overlay from '../components/Overlay';
+import Meta from 'antd/lib/card/Meta';
 
 interface Props {
   usersProp: Array<IUser>;
@@ -33,6 +34,7 @@ const Home: NextPage<Props> = ({
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('discover');
+  const [favoritedUsers, setFavoritedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
     getUserById(currentUser.id);
@@ -59,6 +61,7 @@ const Home: NextPage<Props> = ({
   };
 
   const handleFavorite = async (user: IUser) => {
+    setFavoritedUsers([...favoritedUsers, user]);
     await getNextUser(user);
   };
 
@@ -84,9 +87,21 @@ const Home: NextPage<Props> = ({
 
   const renderFavoritedTab = () => {
     return (
-      <div className="favorited-container tab-container">
-        Favorited container
-      </div>
+      <Row gutter={8}>
+        {favoritedUsers.map((user: IUser) => {
+          return (
+            <Col key={user.id} span={12}>
+              <Card
+                hoverable
+                cover={<img alt="User picture" src={user.picture} />}
+              >
+                <Meta title={user.firstName} />
+              </Card>
+              ,
+            </Col>
+          );
+        })}
+      </Row>
     );
   };
 
