@@ -1,4 +1,4 @@
-import { Button, Spin } from 'antd';
+import { Button, Radio, Spin } from 'antd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
@@ -32,6 +32,7 @@ const Home: NextPage<Props> = ({
   const [limit, setLimit] = useState<number>(limitProp || DEFAULT_USERS_LIMIT);
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [selectedTab, setSelectedTab] = useState<string>('discover');
 
   useEffect(() => {
     getUserById(currentUser.id);
@@ -81,31 +82,90 @@ const Home: NextPage<Props> = ({
     setPage(fetchPage);
   };
 
-  return (
-    <main className={styles.main}>
-      <UserCard user={currentUser} />
-      <div className={styles.actionContainer}>
-        <Button
-          size="large"
-          className={styles.btnAction}
-          shape="circle"
-          icon={<CloseOutlined />}
-          onClick={() => handleUnFavorite(currentUser)}
-        />
-        <Button
-          size="large"
-          className={styles.btnAction}
-          shape="circle"
-          icon={<HeartOutlined />}
-          onClick={() => handleFavorite(currentUser)}
-        />
-        {isFetching && (
-          <Overlay>
-            <Spin className={styles.spinner} />
-          </Overlay>
-        )}
+  const renderFavoritedTab = () => {
+    return (
+      <div className="favorited-container tab-container">
+        Favorited container
       </div>
-    </main>
+    );
+  };
+
+  const renderDiscoverTab = () => {
+    return (
+      <div className="discover-container tab-container">
+        <UserCard user={currentUser} />
+        <div className={styles.actionContainer}>
+          <Button
+            size="large"
+            className={styles.btnAction}
+            shape="circle"
+            icon={<CloseOutlined />}
+            onClick={() => handleUnFavorite(currentUser)}
+          />
+          <Button
+            size="large"
+            className={styles.btnAction}
+            shape="circle"
+            icon={<HeartOutlined />}
+            onClick={() => handleFavorite(currentUser)}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderMatchsTab = () => {
+    return (
+      <div className="matchs-container tab-container">Matchs container</div>
+    );
+  };
+
+  const handleTabClick = (e: any) => {
+    setSelectedTab(e.target.value);
+  };
+
+  const renderButtonTabs = () => {
+    return (
+      <Radio.Group
+        value={selectedTab}
+        onChange={handleTabClick}
+        className={styles.btnTabContainer}
+      >
+        <Radio.Button value="favorited" className={styles.btnTab}>
+          Favorited
+        </Radio.Button>
+        <Radio.Button value="discover" className={styles.btnTab}>
+          Discover
+        </Radio.Button>
+        <Radio.Button value="matchs" className={styles.btnTab}>
+          Matchs
+        </Radio.Button>
+      </Radio.Group>
+    );
+  };
+
+  const renderTabs = () => {
+    if (selectedTab === 'favorited') {
+      return renderFavoritedTab();
+    } else if (selectedTab === 'matchs') {
+      return renderMatchsTab();
+    } else {
+      return renderDiscoverTab();
+    }
+  };
+
+  return (
+    <>
+      <main className={styles.main}>
+        {renderTabs()}
+        {renderButtonTabs()}
+      </main>
+      {isFetching && (
+        <Overlay>
+          <Spin className={styles.spinner} />
+        </Overlay>
+      )}
+    </>
   );
 };
 
