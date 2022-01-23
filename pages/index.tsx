@@ -1,71 +1,99 @@
-import { Button, Carousel } from 'antd';
-import { CarouselRef } from 'antd/lib/carousel';
+import { Button } from 'antd';
 import type { NextPage } from 'next';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
-import axios from '../axios-instance';
 import UserCard from '../components/UserCard';
 import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
-import { favorite, unFavorite } from '../utils/user.util';
+import { fetchUser, fetchUserById } from '../services/user.service';
+import {
+  DEFAULT_USERS_TOTAL,
+  DEFAULT_USERS_PAGE,
+  DEFAULT_USERS_LIMIT,
+} from '../constants/user.constant';
 
 interface Props {
   usersProp: Array<IUser>;
-  total: number;
-  page: number;
-  limit: number;
+  totalProp: number;
+  pageProp: number;
+  limitProp: number;
 }
 
-const Home: NextPage<Props> = ({ usersProp, total, page, limit }) => {
+const Home: NextPage<Props> = ({
+  usersProp,
+  totalProp,
+  pageProp,
+  limitProp,
+}) => {
   const [users, setUsers] = useState<Array<IUser>>(usersProp || []);
+  const [total, setTotal] = useState<number>(totalProp || DEFAULT_USERS_TOTAL);
+  const [page, setPage] = useState<number>(pageProp || DEFAULT_USERS_PAGE);
+  const [limit, setLimit] = useState<number>(limitProp || DEFAULT_USERS_LIMIT);
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
-  const carouselEl = useRef<CarouselRef>(null);
 
-  const handleFavorite = (userId: string) => {
-    if (carouselEl && carouselEl.current) {
-      carouselEl.current.next();
-      const favoritedUsers: Array<IUser> = favorite(userId, users);
-      console.log(favoritedUsers);
-      setUsers(favoritedUsers);
+  useEffect(() => {
+    getUserById(currentUser.id);
+  }, [currentUser.id]);
+
+  const getUserById = async (userId: string) => {
+    const userDetail: IUser = await fetchUserById(userId);
+    setCurrentUser(userDetail);
+  };
+
+  const getNextUser = async (user: IUser) => {
+    const curUserIndex: number = users.findIndex(
+      (userEl: IUser) => userEl.id === user.id
+    );
+    const nextUserIndex: number = curUserIndex + 1;
+    const nextUser: IUser = users[nextUserIndex];
+    if (!nextUser && shouldLoadMore()) {
+      await loadMore();
+    } else {
+      const userDetail: IUser = await fetchUserById(nextUser.id);
+      setCurrentUser(userDetail);
     }
   };
 
-  const handleUnFavorite = (userId: string) => {
-    if (carouselEl && carouselEl.current) {
-      carouselEl.current.next();
-      const unFavoritedUsers: Array<IUser> = unFavorite(userId, users);
-      console.log(unFavoritedUsers);
-
-      setUsers(unFavoritedUsers);
-    }
+  const handleFavorite = async (user: IUser) => {
+    await getNextUser(user);
   };
 
-  const onBeforeChange = (from: number, to: number) => {
-    const currentUser: IUser = users[to];
-    setCurrentUser(currentUser);
+  const handleUnFavorite = async (user: IUser) => {
+    await getNextUser(user);
+  };
+
+  const shouldLoadMore = (): boolean => limit * page < total;
+
+  const loadMore = async () => {
+    const nextPage: number = page + 1;
+    const {
+      users: fetchUsers,
+      total: fetchTotal,
+      page: fetchPage,
+    } = (await fetchUser({ page: nextPage })) || {};
+    setUsers(fetchUsers);
+    setCurrentUser(fetchUsers[0]);
+    setTotal(fetchTotal);
+    setPage(fetchPage);
   };
 
   return (
     <main className={styles.main}>
-      <Carousel dots={false} ref={carouselEl} beforeChange={onBeforeChange}>
-        {users.map((user: IUser) => (
-          <UserCard key={user.id} user={user} />
-        ))}
-      </Carousel>
+      <UserCard user={currentUser} />
       <div className={styles.actionContainer}>
         <Button
           size="large"
           className={styles.btnAction}
           shape="circle"
           icon={<CloseOutlined />}
-          onClick={() => handleUnFavorite(currentUser.id)}
+          onClick={() => handleUnFavorite(currentUser)}
         />
         <Button
           size="large"
           className={styles.btnAction}
           shape="circle"
           icon={<HeartOutlined />}
-          onClick={() => handleFavorite(currentUser.id)}
+          onClick={() => handleFavorite(currentUser)}
         />
       </div>
     </main>
@@ -74,14 +102,13 @@ const Home: NextPage<Props> = ({ usersProp, total, page, limit }) => {
 
 export async function getStaticProps() {
   try {
-    const { data } = await axios.get('/user');
-    const { data: usersProp, total, page, limit } = data || {};
+    const { users = [], total, page, limit } = (await fetchUser()) || {};
     return {
       props: {
-        usersProp,
-        total,
-        page,
-        limit,
+        usersProp: users,
+        totalProp: total,
+        pageProp: page,
+        limitProp: limit,
       },
       revalidate: 1,
     };
