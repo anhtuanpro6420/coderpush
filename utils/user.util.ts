@@ -25,3 +25,9 @@ export const unFavorite = (
   cloneUsers[userIndex] = favoritedUser;
   return cloneUsers;
 };
+
+export const calculateAge = (dob: string) => {
+  const ageDifMs: number = Date.now() - new Date(dob).getTime();
+  const ageDate: Date = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
