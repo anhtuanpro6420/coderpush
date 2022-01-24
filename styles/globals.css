@@ -14,3 +14,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+label.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+label.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+  background-color: #1890ff;
+  color: #fff;
+}

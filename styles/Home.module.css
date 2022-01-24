@@ -5,8 +5,8 @@
   flex-direction: column;
 }
 
-.favoritedContainer {
-  margin: 10px;
+.rowContainer {
+  margin-top: 10px;
 }
 
 .actionContainer {

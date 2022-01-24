@@ -89,10 +89,10 @@ const Home: NextPage<Props> = ({
 
   const renderFavoritedTab = () => {
     return (
-      <Row gutter={8} className={styles.favoritedContainer}>
+      <Row gutter={8}>
         {favoritedUsers.map((user: IUser) => {
           return (
-            <Col key={user.id} span={12}>
+            <Col key={user.id} span={12} className={styles.rowContainer}>
               <Card
                 hoverable
                 cover={<img alt="User picture" src={user.picture} />}
