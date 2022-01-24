@@ -22,7 +22,7 @@ export const clearUsers = async () => {
   }
 };
 
-export const insertUsers = async (users: Array<IUser>) => {
+export const insertUsers = async (users: Array<Partial<IUser>>) => {
   try {
     const usersCollection = await getUsersCollection();
     const res = await usersCollection.insertMany(users);

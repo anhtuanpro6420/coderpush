@@ -1,6 +1,6 @@
 import { IUser } from '../types/user.interface';
 
-export const mockUsers: Array<IUser> = [
+export const mockUsers: Array<Partial<IUser>> = [
   {
     title: 'miss',
     firstName: 'Bessie',
