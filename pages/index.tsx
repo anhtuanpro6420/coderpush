@@ -11,6 +11,7 @@ import {
   DEFAULT_USERS_TOTAL,
   DEFAULT_USERS_PAGE,
   DEFAULT_USERS_LIMIT,
+  USER_TABS,
 } from '../constants/user.constant';
 import Overlay from '../components/Overlay';
 import { renderUserInformation } from '../utils/user.util';
@@ -34,7 +35,7 @@ const Home: NextPage<Props> = ({
   const [limit, setLimit] = useState<number>(limitProp || DEFAULT_USERS_LIMIT);
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [selectedTab, setSelectedTab] = useState<string>('discover');
+  const [selectedTab, setSelectedTab] = useState<string>(USER_TABS.DISCOVER);
   const [favoritedUsers, setFavoritedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
@@ -146,23 +147,23 @@ const Home: NextPage<Props> = ({
         onChange={handleTabClick}
         className={styles.btnTabContainer}
       >
-        <Radio.Button value="favorited" className={styles.btnTab}>
-          Favorited
+        <Radio.Button value={USER_TABS.LIKED} className={styles.btnTab}>
+          {USER_TABS.LIKED}
         </Radio.Button>
-        <Radio.Button value="discover" className={styles.btnTab}>
-          Discover
+        <Radio.Button value={USER_TABS.DISCOVER} className={styles.btnTab}>
+          {USER_TABS.DISCOVER}
         </Radio.Button>
-        <Radio.Button value="matchs" className={styles.btnTab}>
-          Matchs
+        <Radio.Button value={USER_TABS.MATCHES} className={styles.btnTab}>
+          {USER_TABS.MATCHES}
         </Radio.Button>
       </Radio.Group>
     );
   };
 
   const renderTabs = () => {
-    if (selectedTab === 'favorited') {
+    if (selectedTab === USER_TABS.LIKED) {
       return renderFavoritedTab();
-    } else if (selectedTab === 'matchs') {
+    } else if (selectedTab === USER_TABS.MATCHES) {
       return renderMatchsTab();
     } else {
       return renderDiscoverTab();
