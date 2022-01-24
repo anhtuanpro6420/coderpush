@@ -1,5 +1,5 @@
 export interface IUser {
-  id: string;
+  id?: string;
   title: string;
   firstName: string;
   lastName: string;
@@ -8,15 +8,6 @@ export interface IUser {
   email: string;
   dateOfBirth: string;
   phone: string;
-  location: {
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    timezone: string;
-  };
-  registerDate: string;
-  updatedDate: string;
   isFavorited?: boolean;
 }
 export interface IUserRequestOptions {
