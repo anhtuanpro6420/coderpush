@@ -1,5 +1,6 @@
 import axios from '../axios-instance';
 import { IUserRequestOptions } from '../types/user.interface';
+import { filterLikedUsers } from '../utils/user.util';
 
 export const fetchUser = async (options?: IUserRequestOptions) => {
   try {
@@ -51,5 +52,19 @@ export const passUser = async (reactedUserId: string) => {
     return await axios.post(`/users/pass`, { userId, reactedUserId });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const fetchLikedUsers = async () => {
+  try {
+    const userId: string | null = localStorage.getItem('userId');
+    const { data } = await axios.get(`/users/liked`, {
+      headers: { userid: userId as string },
+    });
+    const { data: likedUsers } = data || {};
+    return filterLikedUsers(likedUsers);
+  } catch (error) {
+    console.log(error);
+    return [];
   }
 };

@@ -14,3 +14,11 @@ export interface IUserRequestOptions {
   limit?: number;
   page?: number;
 }
+
+export interface ILikedUser {
+  _id: string;
+  userId: string;
+  reactedUserId: string;
+  hasLiked: boolean;
+  likedUser: IUser;
+}

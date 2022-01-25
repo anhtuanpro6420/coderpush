@@ -7,6 +7,7 @@ import UserCard from '../components/UserCard';
 import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
 import {
+  fetchLikedUsers,
   fetchRandomUser,
   fetchUser,
   fetchUserById,
@@ -42,10 +43,14 @@ const Home: NextPage<Props> = ({
   const [currentUser, setCurrentUser] = useState<IUser>(users[0] || {});
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>(USER_TABS.DISCOVER);
-  const [favoritedUsers, setFavoritedUsers] = useState<Array<IUser>>([]);
+  const [likedUsers, setLikedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
     getRandomUser();
+  }, []);
+
+  useEffect(() => {
+    getLikedUsers();
   }, []);
 
   useEffect(() => {
@@ -59,13 +64,16 @@ const Home: NextPage<Props> = ({
     }
   };
 
+  const getLikedUsers = async () => {
+    const likedUsers: Array<IUser> = await fetchLikedUsers();
+    setLikedUsers(likedUsers);
+  };
+
   const getUserById = async (userId: string) => {
     if (!userId) {
       return;
     }
-    setIsFetching(true);
     const userDetail: IUser = await fetchUserById(userId);
-    setIsFetching(false);
     setCurrentUser(userDetail);
   };
 
@@ -82,14 +90,19 @@ const Home: NextPage<Props> = ({
     }
   };
 
-  const handleFavorite = async (user: IUser) => {
+  const handleLike = async (user: IUser) => {
+    setIsFetching(true);
     await likeUser(user._id);
+    setLikedUsers([...likedUsers, user]);
     await getNextUser(user);
+    setIsFetching(false);
   };
 
-  const handleUnFavorite = async (user: IUser) => {
+  const handleIgnore = async (user: IUser) => {
+    setIsFetching(true);
     await passUser(user._id);
     await getNextUser(user);
+    setIsFetching(false);
   };
 
   const shouldLoadMore = (): boolean => limit * page < total;
@@ -108,10 +121,10 @@ const Home: NextPage<Props> = ({
     setPage(fetchPage);
   };
 
-  const renderFavoritedTab = () => {
+  const renderLikedTab = () => {
     return (
       <Row gutter={8}>
-        {favoritedUsers.map((user: IUser) => {
+        {likedUsers.map((user: IUser) => {
           return (
             <Col key={user._id} span={12} className={styles.rowContainer}>
               <Card
@@ -137,14 +150,14 @@ const Home: NextPage<Props> = ({
             className={styles.btnAction}
             shape="circle"
             icon={<CloseOutlined />}
-            onClick={() => handleUnFavorite(currentUser)}
+            onClick={() => handleIgnore(currentUser)}
           />
           <Button
             size="large"
             className={styles.btnAction}
             shape="circle"
             icon={<HeartOutlined />}
-            onClick={() => handleFavorite(currentUser)}
+            onClick={() => handleLike(currentUser)}
           />
         </div>
       </div>
@@ -183,7 +196,7 @@ const Home: NextPage<Props> = ({
 
   const renderTabs = () => {
     if (selectedTab === USER_TABS.LIKED) {
-      return renderFavoritedTab();
+      return renderLikedTab();
     } else if (selectedTab === USER_TABS.MATCHES) {
       return renderMatchsTab();
     } else {

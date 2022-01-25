@@ -101,10 +101,10 @@ export const getLikedUsers = async (userId: string) => {
             from: 'users',
             localField: 'reactedUserId',
             foreignField: '_id',
-            as: 'likedUsers',
+            as: 'likedUser',
           },
         },
-        { $unwind: '$likedUsers' },
+        { $unwind: '$likedUser' },
       ])
       .toArray();
     return likedUsers;

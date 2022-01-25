@@ -1,4 +1,4 @@
-import { IUser } from '../types/user.interface';
+import { ILikedUser, IUser } from '../types/user.interface';
 
 const calculateAge = (dob: string) => {
   const ageDifMs: number = Date.now() - new Date(dob).getTime();
@@ -11,4 +11,10 @@ export const renderUserInformation = (user: IUser) => {
   return `${firstName} ${lastName}${
     (dateOfBirth && ', ' + calculateAge(dateOfBirth)) || ''
   }`;
+};
+
+export const filterLikedUsers = (users: Array<ILikedUser> = []) => {
+  return users.map((likedUser: ILikedUser) => ({
+    ...likedUser.likedUser,
+  }));
 };
