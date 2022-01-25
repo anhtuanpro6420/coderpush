@@ -89,3 +89,26 @@ export const passUser = async (userId: string, passedUserId: string) => {
     throw error;
   }
 };
+
+export const getLikedUsers = async (userId: string) => {
+  try {
+    const reactsCollection = await getReactCollection();
+    const likedUsers = await reactsCollection
+      .aggregate([
+        { $match: { userId: new ObjectId(userId), hasLiked: true } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'reactedUserId',
+            foreignField: '_id',
+            as: 'likedUsers',
+          },
+        },
+        { $unwind: '$likedUsers' },
+      ])
+      .toArray();
+    return likedUsers;
+  } catch (error) {
+    throw error;
+  }
+};
