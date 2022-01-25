@@ -20,6 +20,15 @@ export default async function handler(
       limit: Number(limit),
     } as IUserRequestOptions;
     const users = await getUsers(options);
-    return res.status(200).json({ success: true, data: users });
+    const total: number = (users && users.length) || 0;
+    return res.status(200).json({
+      success: true,
+      data: {
+        users,
+        total,
+        page,
+        limit,
+      },
+    });
   }
 }

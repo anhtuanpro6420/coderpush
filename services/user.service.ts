@@ -3,8 +3,8 @@ import { IUserRequestOptions } from '../types/user.interface';
 
 export const fetchUser = async (options?: IUserRequestOptions) => {
   try {
-    const { data } = await axios.get('/user', { params: options });
-    const { data: users, total, page, limit } = data || {};
+    const { data: { data } } = await axios.get('/users', { params: options });
+    const { users, total, page, limit } = data || {};
     return { users, total, page, limit };
   } catch (error) {
     console.log(error);
@@ -14,7 +14,8 @@ export const fetchUser = async (options?: IUserRequestOptions) => {
 
 export const fetchUserById = async (userId: string) => {
   try {
-    const { data: user } = await axios.get(`/user/${userId}`);
+    const { data } = await axios.get(`/users/${userId}`);
+    const { data: user } = data || {};
     return user;
   } catch (error) {
     console.log(error);

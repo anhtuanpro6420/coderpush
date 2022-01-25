@@ -39,10 +39,13 @@ const Home: NextPage<Props> = ({
   const [favoritedUsers, setFavoritedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
-    getUserById(currentUser.id);
+    getUserById(currentUser?._id);
   }, []);
 
   const getUserById = async (userId: string) => {
+    if (!userId) {
+      return;
+    }
     setIsFetching(true);
     const userDetail: IUser = await fetchUserById(userId);
     setIsFetching(false);
@@ -51,14 +54,14 @@ const Home: NextPage<Props> = ({
 
   const getNextUser = async (user: IUser) => {
     const curUserIndex: number = users.findIndex(
-      (userEl: IUser) => userEl.id === user.id
+      (userEl: IUser) => userEl._id === user._id
     );
     const nextUserIndex: number = curUserIndex + 1;
     const nextUser: IUser = users[nextUserIndex];
     if (!nextUser && shouldLoadMore()) {
       await loadMore();
     } else {
-      await getUserById(nextUser.id);
+      await getUserById(nextUser?._id);
     }
   };
 
@@ -82,7 +85,7 @@ const Home: NextPage<Props> = ({
     } = (await fetchUser({ page: nextPage })) || {};
     setUsers(fetchUsers);
     const firstUser: IUser = fetchUsers[0];
-    await getUserById(firstUser.id);
+    await getUserById(firstUser._id);
     setTotal(fetchTotal);
     setPage(fetchPage);
   };
@@ -92,7 +95,7 @@ const Home: NextPage<Props> = ({
       <Row gutter={8}>
         {favoritedUsers.map((user: IUser) => {
           return (
-            <Col key={user.id} span={12} className={styles.rowContainer}>
+            <Col key={user._id} span={12} className={styles.rowContainer}>
               <Card
                 hoverable
                 cover={<img alt="User picture" src={user.picture} />}

@@ -15,7 +15,7 @@ const UserCard: FC<Props> = ({ user }) => {
       className={styles.userCard}
       cover={
         <img
-          src={user.picture}
+          src={user?.picture}
           alt="User picture"
           className={styles.userPicture}
         />
