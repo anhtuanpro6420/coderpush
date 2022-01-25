@@ -17,6 +17,17 @@ const getUsersCollection = async () => {
   }
 };
 
+export const getRandomUser = async () => {
+  try {
+    const usersCollection = await getUsersCollection();
+    const users = await usersCollection.find({}).toArray();
+    const randomUser = users[Math.floor(Math.random() * users.length)];
+    return randomUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUsers = async (options: IUserRequestOptions) => {
   try {
     const { limit = DEFAULT_USERS_LIMIT, page = DEFAULT_USERS_PAGE } = options;

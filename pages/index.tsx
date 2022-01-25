@@ -6,7 +6,11 @@ import Meta from 'antd/lib/card/Meta';
 import UserCard from '../components/UserCard';
 import styles from '../styles/Home.module.css';
 import { IUser } from '../types/user.interface';
-import { fetchUser, fetchUserById } from '../services/user.service';
+import {
+  fetchRandomUser,
+  fetchUser,
+  fetchUserById,
+} from '../services/user.service';
 import {
   DEFAULT_USERS_TOTAL,
   DEFAULT_USERS_PAGE,
@@ -39,8 +43,19 @@ const Home: NextPage<Props> = ({
   const [favoritedUsers, setFavoritedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
+    getRandomUser();
+  }, []);
+
+  useEffect(() => {
     getUserById(currentUser?._id);
   }, []);
+
+  const getRandomUser = async () => {
+    if (!localStorage.getItem('userId')) {
+      const userId: IUser = await fetchRandomUser();
+      localStorage.setItem('userId', userId?._id);
+    }
+  };
 
   const getUserById = async (userId: string) => {
     if (!userId) {
