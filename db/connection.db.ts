@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 const connectDb = async () => {
   try {
     const url =
-      'mongodb+srv://si:Si%40210294@cluster0.wcid1.mongodb.net/coderpush?retryWrites=true&w=majority';
+      'mongodb+srv://si:Si%40210294@cluster0.mnn3d.mongodb.net/coderpush?retryWrites=true&w=majority';
     const client = new MongoClient(url);
     await client.connect();
     console.log('Connected successfully to server');
