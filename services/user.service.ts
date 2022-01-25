@@ -43,6 +43,7 @@ export const likeUser = async (reactedUserId: string) => {
     return await axios.post(`/users/like`, { userId, reactedUserId });
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 

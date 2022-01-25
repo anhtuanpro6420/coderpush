@@ -67,6 +67,13 @@ export const getUserById = async (userId: string) => {
 export const likeUser = async (userId: string, likedUserId: string) => {
   try {
     const reactsCollection = await getReactCollection();
+    const existedUser = await reactsCollection.findOne({
+      userId: new ObjectId(userId),
+      reactedUserId: new ObjectId(likedUserId),
+    });
+    if (existedUser) {
+      throw new Error('User was already liked');
+    }
     return await reactsCollection.insertOne({
       userId: new ObjectId(userId),
       reactedUserId: new ObjectId(likedUserId),

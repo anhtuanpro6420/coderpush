@@ -93,8 +93,10 @@ const Home: NextPage<Props> = ({
 
   const handleLike = async (user: IUser) => {
     setIsFetching(true);
-    await likeUser(user._id);
-    setLikedUsers([...likedUsers, user]);
+    const response = await likeUser(user._id);
+    if (response && response !== null) {
+      setLikedUsers([...likedUsers, user]);
+    }
     await getNextUser(user);
     setIsFetching(false);
   };
