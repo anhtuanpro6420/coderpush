@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { likeUser } from '../../../db/user.db';
+import { getReactById, likeUser } from '../../../db/user.db';
 import { IResponse } from '../../../types/common.interface';
 
 export default async function handler(
@@ -11,10 +11,11 @@ export default async function handler(
       const {
         body: { userId, reactedUserId },
       } = req || {};
-      await likeUser(userId, reactedUserId);
+      const reactId = await likeUser(userId, reactedUserId);
+      const reactInserted = await getReactById(reactId);
       return res.status(200).json({
         success: true,
-        data: {},
+        data: reactInserted,
       });
     } catch (error) {
       return res.status(500).json({

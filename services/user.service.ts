@@ -40,7 +40,9 @@ export const fetchRandomUser = async () => {
 export const likeUser = async (reactedUserId: string) => {
   try {
     const userId: string | null = localStorage.getItem('userId');
-    return await axios.post(`/users/like`, { userId, reactedUserId });
+    const { data } = await axios.post(`/users/like`, { userId, reactedUserId });
+    const { data: reaction } = data || {};
+    return reaction;
   } catch (error) {
     console.log(error);
     return null;

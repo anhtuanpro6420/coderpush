@@ -67,18 +67,35 @@ export const getUserById = async (userId: string) => {
 export const likeUser = async (userId: string, likedUserId: string) => {
   try {
     const reactsCollection = await getReactCollection();
-    const existedUser = await reactsCollection.findOne({
-      userId: new ObjectId(userId),
-      reactedUserId: new ObjectId(likedUserId),
-    });
-    if (existedUser) {
-      throw new Error('User was already liked');
-    }
-    return await reactsCollection.insertOne({
+    const hasLikedThisUser = await reactsCollection.findOne({
       userId: new ObjectId(userId),
       reactedUserId: new ObjectId(likedUserId),
       hasLiked: true,
     });
+    if (hasLikedThisUser) {
+      throw new Error('User was already liked');
+    }
+    const userHasLikedYou = await reactsCollection.findOne({
+      userId: new ObjectId(likedUserId),
+      reactedUserId: new ObjectId(userId),
+      hasLiked: true,
+    });
+    if (userHasLikedYou) {
+      const { insertedId } = await reactsCollection.insertOne({
+        userId: new ObjectId(userId),
+        reactedUserId: new ObjectId(likedUserId),
+        hasLiked: true,
+        hasMatched: true,
+      });
+      return insertedId;
+    }
+    const { insertedId } = await reactsCollection.insertOne({
+      userId: new ObjectId(userId),
+      reactedUserId: new ObjectId(likedUserId),
+      hasLiked: true,
+      hasMatched: false,
+    });
+    return insertedId;
   } catch (error) {
     throw error;
   }
@@ -115,6 +132,17 @@ export const getLikedUsers = async (userId: string) => {
       ])
       .toArray();
     return likedUsers;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getReactById = async (reactId: ObjectId | string) => {
+  try {
+    const reactsCollection = await getReactCollection();
+    return await reactsCollection.findOne({
+      _id: reactId,
+    });
   } catch (error) {
     throw error;
   }

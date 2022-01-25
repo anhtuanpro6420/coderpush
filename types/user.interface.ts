@@ -15,10 +15,11 @@ export interface IUserRequestOptions {
   page?: number;
 }
 
-export interface ILikedUser {
+export interface IReaction {
   _id: string;
   userId: string;
   reactedUserId: string;
   hasLiked: boolean;
   likedUser: IUser;
+  hasMatched: boolean;
 }

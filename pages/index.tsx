@@ -1,11 +1,11 @@
-import { Button, Card, Col, Radio, Row, Spin } from 'antd';
+import { Button, Card, Col, Radio, Row, Spin, notification } from 'antd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { CloseOutlined, HeartOutlined } from '@ant-design/icons';
 import Meta from 'antd/lib/card/Meta';
 import UserCard from '../components/UserCard';
 import styles from '../styles/Home.module.css';
-import { IUser } from '../types/user.interface';
+import { IReaction, IUser } from '../types/user.interface';
 import {
   fetchLikedUsers,
   fetchRandomUser,
@@ -91,11 +91,22 @@ const Home: NextPage<Props> = ({
     }
   };
 
+  const openNotification = (user: IUser) => {
+    notification.open({
+      message: 'Congratulation! You have a match!',
+      description: `${user.firstName} also liked you!!!`,
+    });
+  };
+
   const handleLike = async (user: IUser) => {
     setIsFetching(true);
-    const response = await likeUser(user._id);
-    if (response && response !== null) {
+    const reaction: IReaction | null = await likeUser(user._id);
+    if (reaction && reaction !== null) {
       setLikedUsers([...likedUsers, user]);
+      const { hasMatched = false } = reaction || {};
+      if (hasMatched) {
+        openNotification(user);
+      }
     }
     await getNextUser(user);
     setIsFetching(false);
