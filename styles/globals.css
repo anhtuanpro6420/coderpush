@@ -20,3 +20,8 @@ label.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):h
   background-color: #1890ff;
   color: #fff;
 }
+
+#__next {
+  display: flex;
+  justify-content: center;
+}
