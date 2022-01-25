@@ -12,23 +12,31 @@ export default async function handler(
   res: NextApiResponse<IResponse>
 ) {
   if (req.method === 'GET') {
-    const {
-      query: { page = DEFAULT_USERS_PAGE, limit = DEFAULT_USERS_LIMIT },
-    } = req || {};
-    const options: IUserRequestOptions = {
-      page: Number(page),
-      limit: Number(limit),
-    } as IUserRequestOptions;
-    const users = await getUsers(options);
-    const total: number = (users && users.length) || 0;
-    return res.status(200).json({
-      success: true,
-      data: {
-        users,
-        total,
-        page,
-        limit,
-      },
-    });
+    try {
+      const {
+        query: { page = DEFAULT_USERS_PAGE, limit = DEFAULT_USERS_LIMIT },
+      } = req || {};
+      const options: IUserRequestOptions = {
+        page: Number(page),
+        limit: Number(limit),
+      } as IUserRequestOptions;
+      const users = await getUsers(options);
+      const total: number = (users && users.length) || 0;
+      return res.status(200).json({
+        success: true,
+        data: {
+          users,
+          total,
+          page,
+          limit,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+        data: {},
+      });
+    }
   }
 }

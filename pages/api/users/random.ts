@@ -7,10 +7,18 @@ export default async function handler(
   res: NextApiResponse<IResponse>
 ) {
   if (req.method === 'GET') {
-    const user = await getRandomUser();
-    return res.status(200).json({
-      success: true,
-      data: user,
-    });
+    try {
+      const user = await getRandomUser();
+      return res.status(200).json({
+        success: true,
+        data: user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+        data: {},
+      });
+    }
   }
 }
