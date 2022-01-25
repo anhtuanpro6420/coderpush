@@ -14,8 +14,3 @@ export interface IUserRequestOptions {
   limit?: number;
   page?: number;
 }
-
-export interface IUsersResponse {
-  limit?: number;
-  page?: number;
-}
