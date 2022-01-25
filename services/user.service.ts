@@ -35,3 +35,21 @@ export const fetchRandomUser = async () => {
     return null;
   }
 };
+
+export const likeUser = async (reactedUserId: string) => {
+  try {
+    const userId: string | null = localStorage.getItem('userId');
+    return await axios.post(`/users/like`, { userId, reactedUserId });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const passUser = async (reactedUserId: string) => {
+  try {
+    const userId: string | null = localStorage.getItem('userId');
+    return await axios.post(`/users/pass`, { userId, reactedUserId });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -10,6 +10,8 @@ import {
   fetchRandomUser,
   fetchUser,
   fetchUserById,
+  likeUser,
+  passUser,
 } from '../services/user.service';
 import {
   DEFAULT_USERS_TOTAL,
@@ -81,11 +83,12 @@ const Home: NextPage<Props> = ({
   };
 
   const handleFavorite = async (user: IUser) => {
-    setFavoritedUsers([...favoritedUsers, user]);
+    await likeUser(user._id);
     await getNextUser(user);
   };
 
   const handleUnFavorite = async (user: IUser) => {
+    await passUser(user._id);
     await getNextUser(user);
   };
 
