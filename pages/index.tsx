@@ -55,6 +55,7 @@ const Home: NextPage<Props> = ({
 
   useEffect(() => {
     getUserById(currentUser?._id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getRandomUser = async () => {
