@@ -17,6 +17,17 @@ const getUsersCollection = async () => {
   }
 };
 
+const getReactCollection = async () => {
+  try {
+    const db = await connectDb();
+    const reactCollection = db.collection('reacts');
+    return reactCollection;
+  } catch (error) {
+    console.log('Can not get reacts collection: ', error);
+    throw error;
+  }
+};
+
 export const getRandomUser = async () => {
   try {
     const usersCollection = await getUsersCollection();
@@ -48,6 +59,32 @@ export const getUserById = async (userId: string) => {
     const usersCollection = await getUsersCollection();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
     return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const likeUser = async (userId: string, likedUserId: string) => {
+  try {
+    const reactsCollection = await getReactCollection();
+    return await reactsCollection.insertOne({
+      userId: new ObjectId(userId),
+      reactedUserId: new ObjectId(likedUserId),
+      hasLiked: true,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const passUser = async (userId: string, passedUserId: string) => {
+  try {
+    const reactsCollection = await getReactCollection();
+    return await reactsCollection.insertOne({
+      userId: new ObjectId(userId),
+      reactedUserId: new ObjectId(passedUserId),
+      hasLiked: false,
+    });
   } catch (error) {
     throw error;
   }
