@@ -3,7 +3,7 @@ import {
   DEFAULT_USERS_LIMIT,
   DEFAULT_USERS_PAGE,
 } from '../../../constants/user.constant';
-import { getUsers } from '../../../db/user.db';
+import { getAllUsers, getUsers } from '../../../db/user.db';
 import { IResponse } from '../../../types/common.interface';
 import { IUserRequestOptions } from '../../../types/user.interface';
 
@@ -21,7 +21,8 @@ export default async function handler(
         limit: Number(limit),
       } as IUserRequestOptions;
       const users = await getUsers(options);
-      const total: number = (users && users.length) || 0;
+      const allUsers = await getAllUsers();
+      const total: number = (allUsers && allUsers.length) || 0;
       return res.status(200).json({
         success: true,
         data: {

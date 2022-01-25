@@ -54,6 +54,16 @@ export const getUsers = async (options: IUserRequestOptions) => {
   }
 };
 
+export const getAllUsers = async () => {
+  try {
+    const usersCollection = await getUsersCollection();
+    const users = await usersCollection.find({}).toArray();
+    return users || [];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUserById = async (userId: string) => {
   try {
     const usersCollection = await getUsersCollection();
@@ -66,6 +76,9 @@ export const getUserById = async (userId: string) => {
 
 export const likeUser = async (userId: string, likedUserId: string) => {
   try {
+    if (userId === likedUserId) {
+      throw new Error('Can not like yourself');
+    }
     const reactsCollection = await getReactCollection();
     const hasLikedThisUser = await reactsCollection.findOne({
       userId: new ObjectId(userId),
@@ -87,6 +100,15 @@ export const likeUser = async (userId: string, likedUserId: string) => {
         hasLiked: true,
         hasMatched: true,
       });
+      await reactsCollection.findOneAndUpdate(
+        {
+          userId: new ObjectId(likedUserId),
+          reactedUserId: new ObjectId(userId),
+          hasLiked: true,
+          hasMatched: false,
+        },
+        { $set: { hasMatched: true } }
+      );
       return insertedId;
     }
     const { insertedId } = await reactsCollection.insertOne({
@@ -97,6 +119,7 @@ export const likeUser = async (userId: string, likedUserId: string) => {
     });
     return insertedId;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
@@ -143,6 +166,29 @@ export const getReactById = async (reactId: ObjectId | string) => {
     return await reactsCollection.findOne({
       _id: reactId,
     });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getMatchedUsers = async (userId: string) => {
+  try {
+    const reactsCollection = await getReactCollection();
+    const matchedUsers = await reactsCollection
+      .aggregate([
+        { $match: { userId: new ObjectId(userId), hasMatched: true } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'reactedUserId',
+            foreignField: '_id',
+            as: 'matchedUser',
+          },
+        },
+        { $unwind: '$matchedUser' },
+      ])
+      .toArray();
+    return matchedUsers;
   } catch (error) {
     throw error;
   }

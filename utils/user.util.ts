@@ -14,7 +14,13 @@ export const renderUserInformation = (user: IUser) => {
 };
 
 export const filterLikedUsers = (users: Array<IReaction> = []) => {
-  return users.map((likedUser: IReaction) => ({
-    ...likedUser.likedUser,
+  return users.map((reaction: IReaction) => ({
+    ...reaction.likedUser,
+  }));
+};
+
+export const filterMatchedUsers = (users: Array<IReaction> = []) => {
+  return users.map((reaction: IReaction) => ({
+    ...reaction.matchedUser,
   }));
 };

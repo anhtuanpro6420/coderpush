@@ -8,6 +8,7 @@ import styles from '../styles/Home.module.css';
 import { IReaction, IUser } from '../types/user.interface';
 import {
   fetchLikedUsers,
+  fetchMatchedUsers,
   fetchRandomUser,
   fetchUser,
   fetchUserById,
@@ -44,6 +45,7 @@ const Home: NextPage<Props> = ({
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>(USER_TABS.DISCOVER);
   const [likedUsers, setLikedUsers] = useState<Array<IUser>>([]);
+  const [matchedUsers, setMatchedUsers] = useState<Array<IUser>>([]);
 
   useEffect(() => {
     getRandomUser();
@@ -51,6 +53,7 @@ const Home: NextPage<Props> = ({
 
   useEffect(() => {
     getLikedUsers();
+    getMatchedUsers();
   }, []);
 
   useEffect(() => {
@@ -68,6 +71,11 @@ const Home: NextPage<Props> = ({
   const getLikedUsers = async () => {
     const likedUsers: Array<IUser> = await fetchLikedUsers();
     setLikedUsers(likedUsers);
+  };
+
+  const getMatchedUsers = async () => {
+    const matchedUsers: Array<IUser> = await fetchMatchedUsers();
+    setMatchedUsers(matchedUsers);
   };
 
   const getUserById = async (userId: string) => {
@@ -105,6 +113,7 @@ const Home: NextPage<Props> = ({
       setLikedUsers([...likedUsers, user]);
       const { hasMatched = false } = reaction || {};
       if (hasMatched) {
+        setMatchedUsers([...matchedUsers, user]);
         openNotification(user);
       }
     }
@@ -180,7 +189,20 @@ const Home: NextPage<Props> = ({
 
   const renderMatchsTab = () => {
     return (
-      <div className="matchs-container tab-container">Matchs container</div>
+      <Row gutter={8}>
+        {matchedUsers.map((user: IUser) => {
+          return (
+            <Col key={user._id} span={12} className={styles.rowContainer}>
+              <Card
+                hoverable
+                cover={<img alt="User picture" src={user.picture} />}
+              >
+                <Meta title={renderUserInformation(user)} />
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
     );
   };
 

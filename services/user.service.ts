@@ -1,6 +1,6 @@
 import axios from '../axios-instance';
 import { IUserRequestOptions } from '../types/user.interface';
-import { filterLikedUsers } from '../utils/user.util';
+import { filterLikedUsers, filterMatchedUsers } from '../utils/user.util';
 
 export const fetchUser = async (options?: IUserRequestOptions) => {
   try {
@@ -66,6 +66,20 @@ export const fetchLikedUsers = async () => {
     });
     const { data: likedUsers } = data || {};
     return filterLikedUsers(likedUsers);
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export const fetchMatchedUsers = async () => {
+  try {
+    const userId: string | null = localStorage.getItem('userId');
+    const { data } = await axios.get(`/users/matched`, {
+      headers: { userid: userId as string },
+    });
+    const { data: matchedUsers } = data || {};
+    return filterMatchedUsers(matchedUsers);
   } catch (error) {
     console.log(error);
     return [];

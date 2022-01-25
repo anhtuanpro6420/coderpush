@@ -22,4 +22,5 @@ export interface IReaction {
   hasLiked: boolean;
   likedUser: IUser;
   hasMatched: boolean;
+  matchedUser: IUser;
 }
